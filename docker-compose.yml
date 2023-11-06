@@ -3,12 +3,10 @@ version: '3.9'
 services:
   postgres:
     image: postgres
+    restart: always
     ports:
-      - '5432:5432'
-    env_file:
-      - .env
+      - 5432:5432
     volumes:
-      - 'postgres:/var/lib/postgresql/data'
-
-volumes:
-  postgres:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_PASSWORD: mypass
