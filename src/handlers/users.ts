@@ -1,6 +1,7 @@
 import { Request, Response, Application } from "express";
 import { User } from "../models/user";
 import { UserStore } from "../models/user";
+import jwt from 'jsonwebtoken';
 
 const store = new UserStore();
 
@@ -14,7 +15,8 @@ const create = async (req: Request, res: Response) => {
     };
     try{
         const result = await store.create(user);
-        res.json(result);
+        const token = jwt.sign({ user: result }, process.env.TOKEN_SECRET as string);
+        res.json(token);
     }
     catch(err){
         res.status(400);
@@ -47,9 +49,23 @@ const authenticate = async (req: Request, res: Response) => {
     }
 }
 
+const verifyAuthToken = async (req: Request, res: Response, next: Function) => {
+    const authorizationHeader: string = req.headers.authorization as string;
+    const token = authorizationHeader.split(' ')[1];
+    try {
+        const verifyAuthToken = jwt.verify(token, process.env.TOKEN_SECRET as string);
+        next();
+    }
+    catch(err) {
+        res.status(401);
+        res.json('Access denied, invalid token');    
+    }
+}
+
+
 const userRoutes = (app: Application) => {
     app.post('/users', create);
-    app.get('/users/:id', getById);
+    app.get('/users/:id', verifyAuthToken, getById);
     app.post('/users/authenticate', authenticate);
 };
 
