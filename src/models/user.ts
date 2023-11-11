@@ -20,7 +20,7 @@ export class UserStore {
                 saltRounds
             );
             const conn = await client.connect();
-            const sql = 'INSERT INTO "USER" (firstName, lastName, userName, password) VALUES($1, $2, $3, $4);';
+            const sql = 'INSERT INTO "USER" (firstName, lastName, userName, password) VALUES($1, $2, $3, $4) RETURNING id, firstName, lastName, userName';
             const result = await conn.query(sql, [user.firstName, user.lastName, user.userName, hash]);
             conn.release();
             return result.rows[0];

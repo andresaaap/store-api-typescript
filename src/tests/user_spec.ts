@@ -35,4 +35,44 @@ describe("UserStore methods", () => {
 
         expect(resultString).toEqual(expectedString);
     });
+
+    it("getById method should return the correct user", async () => {
+
+        const user1: User = {
+            id: 1,
+            firstName: 'Mike',
+            lastName: 'Jordan',
+            userName: 'mike23',
+            password: '6rings'
+        };
+
+        const result: User = await store.getById(user1.id);
+        // User to string contatenation of values except password
+        const resultString = Object.values(result).slice(0, 4).join(' ');
+        // Expected to string contatenation of values except password
+        const expectedString = Object.values(user1).slice(0, 4).join(' ');
+
+
+        expect(resultString).toEqual(expectedString);
+    });
+
+    it("authenticate method should return the correct user", async () => {
+
+        const user1: User = {
+            id: 1,
+            firstName: 'Mike',
+            lastName: 'Jordan',
+            userName: 'mike23',
+            password: '6rings'
+        };
+
+        const result: User | null = await store.authenticate(user1.userName, user1.password);
+        // User to string contatenation of values except password
+        let resultString = '';
+        if(result){
+            resultString = Object.values(result).slice(0, 4).join(' ');
+        }
+        // Expected to string contatenation of values except password
+        const expectedString = Object.values(user1).slice(0, 4).join(' ');
+    });
 });
