@@ -1,4 +1,4 @@
 /* Replace with your SQL commands */
+-- Delete table "USER"
 
-/* drop table "USER" */
 DROP TABLE "USER";

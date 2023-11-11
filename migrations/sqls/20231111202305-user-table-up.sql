@@ -1,5 +1,4 @@
 /* Replace with your SQL commands */
-
 CREATE TABLE "USER" (
     id SERIAL NOT NULL,
     firstName VARCHAR(50) NOT NULL,
