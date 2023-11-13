@@ -1,4 +1,5 @@
 import {User, UserStore} from '../models/user';
+import client from '../database';
 
 const store = new UserStore();
 
@@ -17,21 +18,47 @@ describe("User Model", () => {
 });
 
 describe("UserStore methods", () => {
+    const user1: User = {
+        id: 1,
+        firstName: 'Mike',
+        lastName: 'Jordan',
+        userName: 'mike23',
+        password: '6rings'
+    };
+
+    beforeEach(async () => {
+        await store.create(user1);
+    });
+
+    afterEach(async () => {
+        // Delete all of the users
+        const conn = await client.connect();
+        const sql = 'DELETE FROM "USER";';
+        await conn.query(sql);
+        conn.release();
+
+        // Reset the sequence
+        const conn2 = await client.connect();
+        const sql2 = 'ALTER SEQUENCE "USER_id_seq" RESTART WITH 1;';
+        await conn2.query(sql2);
+        conn2.release();
+    });
+
     it("create method should add a user", async () => {
 
-        const user1: User = {
-            id: 1,
-            firstName: 'Mike',
-            lastName: 'Jordan',
-            userName: 'mike23',
-            password: '6rings'
+        const user2: User = {
+            id: 2,
+            firstName: 'Shaquille',
+            lastName: 'ONeal',
+            userName: 'shaq34',
+            password: '4rings'
         };
 
-        const result: User = await store.create(user1);
+        const result: User = await store.create(user2);
         // User to string contatenation of values
         const resultString = Object.values(result).join(' ');
         // Expected to string contatenation of values expect password
-        const expectedString = Object.values(user1).slice(0, 4).join(' ');
+        const expectedString = Object.values(user2).slice(0, 4).join(' ');
 
         expect(resultString).toEqual(expectedString);
     });

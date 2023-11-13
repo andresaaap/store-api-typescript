@@ -37,7 +37,7 @@ export class ProductStore {
     async create(prod: Product): Promise<Product> {
         try{
             const conn = await client.connect();
-            const sql = 'INSERT INTO product (name, price, category) VALUES($1, $2, $3);';
+            const sql = 'INSERT INTO product (name, price, category) VALUES($1, $2, $3) RETURNING *;';
             const result = await conn.query(sql, [prod.name, prod.price, prod.category]);
             conn.release();
             return result.rows[0];
@@ -46,5 +46,18 @@ export class ProductStore {
             throw new Error(`Could not add new product ${prod.name}. Error: ${err}`);
         }
 
+    }
+
+    async delete(id: number): Promise<Product> {
+        try{
+            const conn = await client.connect();
+            const sql = 'DELETE FROM product WHERE id=($1) RETURNING *;';
+            const result = await conn.query(sql, [id]);
+            conn.release();
+            return result.rows[0];
+        }
+        catch(err){
+            throw new Error(`Could not delete product ${id}. Error: ${err}`);
+        }
     }
 }
