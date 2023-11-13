@@ -33,26 +33,26 @@ export class OrderStore {
         }
     }
 
-    async getCompletedByUserId(user_id: number): Promise<Order> {
+    async getCompletedByUserId(user_id: number): Promise<Order[]> {
         try{
             const conn = await client.connect();
             const sql = 'SELECT * FROM "ORDER" WHERE user_id=($1) and status=($2)';
             const result = await conn.query(sql, [user_id, 'complete']);
             conn.release();
-            return result.rows[0];
+            return result.rows;
         }
         catch(err){
             throw new Error(`Could not get order ${user_id}. Error: ${err}`);
         }
     }
 
-    async getActiveByUserId(user_id: number): Promise<Order> {
+    async getActiveByUserId(user_id: number): Promise<Order[]> {
         try{
             const conn = await client.connect();
             const sql = 'SELECT * FROM "ORDER" WHERE user_id=($1) and status=($2)';
             const result = await conn.query(sql, [user_id, 'active']);
             conn.release();
-            return result.rows[0];
+            return result.rows;
         }
         catch(err){
             throw new Error(`Could not get order ${user_id}. Error: ${err}`);
@@ -62,7 +62,7 @@ export class OrderStore {
     async create(o: Order): Promise<Order> {
         try{
             const conn = await client.connect();
-            const sql = 'INSERT INTO "ORDER" (status, user_id) VALUES($1, $2)';
+            const sql = 'INSERT INTO "ORDER" (status, user_id) VALUES($1, $2) RETURNING *';
             const result = await conn.query(sql, [o.status, o.user_id]);
             conn.release();
             return result.rows[0];
@@ -75,7 +75,7 @@ export class OrderStore {
     async update(o: Order): Promise<Order> {
         try{
             const conn = await client.connect();
-            const sql = 'UPDATE "ORDER" SET status=($1), user_id=($2) WHERE id=($3)';
+            const sql = 'UPDATE "ORDER" SET status=($1), user_id=($2) WHERE id=($3) RETURNING *';
             const result = await conn.query(sql, [o.status, o.user_id, o.id]);
             conn.release();
             return result.rows[0];
@@ -85,13 +85,13 @@ export class OrderStore {
         }
     }
 
-    async addProduct(order_id: number, product_id: number, quantity: number,): Promise<Order> {
+    async addProduct(order_id: number, product_id: number, quantity: number): Promise<boolean> {
         try{
             const conn = await client.connect();
-            const sql = 'INSERT INTO order_product (quantity, order_id, product_id) VALUES($1, $2, $3)';
-            const result = await conn.query(sql, [quantity, order_id, product_id]);
+            const sql = 'INSERT INTO order_product (order_id, product_id, quantity) VALUES($1, $2, $3)';
+            const result = await conn.query(sql, [order_id, product_id, quantity]);
             conn.release();
-            return result.rows[0];
+            return true;
         }
         catch(err){
             throw new Error(`Could not add product to order ${order_id}. Error: ${err}`);
