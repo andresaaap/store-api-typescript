@@ -22,6 +22,12 @@ describe('Test endpoints responses', () => {
             password: '4rings'
         });
         token = response2.body;
+
+        const response3 = await request.post('/products').send({
+            name: 'Shaqs 34s',
+            price: 100.00,
+            category: 'Basketball Shoes'
+        });
     });
 
     afterEach(async () => {
@@ -36,6 +42,18 @@ describe('Test endpoints responses', () => {
         const sql2 = 'ALTER SEQUENCE "USER_id_seq" RESTART WITH 1;';
         await conn2.query(sql2);
         conn2.release();
+
+        // Delete all of the products
+        const conn3 = await client.connect();
+        const sql3 = 'DELETE FROM product;';
+        await conn3.query(sql3);
+        conn3.release();
+
+        // Reset the sequence
+        const conn4 = await client.connect();
+        const sql4 = 'ALTER SEQUENCE product_id_seq RESTART WITH 1;';
+        await conn4.query(sql4);
+        conn4.release();
     });
     
     it('post /users create user - good user input - user created in db', async () => {
@@ -60,6 +78,25 @@ describe('Test endpoints responses', () => {
         
         const response2 = await request.get('/users/1').set('Authorization', 'Bearer ' + token);
         expect(response2.status).toBe(200);
+    });
+
+    it('post /products create product - good product input - product created in db', async () => {
+        const response = await request.post('/products').send({
+            name: 'Jordan 1s',
+            price: 150.00,
+            category: 'Basketball Shoes'
+        });
+        expect(response.status).toBe(200);
+    });
+
+    it('get /products get all products - database with correct information - products returned', async () => {
+        const response = await request.get('/products');
+        expect(response.status).toBe(200);
+    });
+
+    it('get /products/:id get product by id - good product input - product returned', async () => {
+        const response = await request.get('/products/1');
+        expect(response.status).toBe(200);
     });
 });
 
