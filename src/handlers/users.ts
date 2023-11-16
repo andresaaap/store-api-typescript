@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 const store = new UserStore();
 
 const create = async (req: Request, res: Response) => {
-    let user: User = {
+    const user: User = {
         id: 0,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -25,7 +25,7 @@ const create = async (req: Request, res: Response) => {
 }
 
 const getById = async (req: Request, res: Response) => {
-    let id: number = Number(req.params.id);
+    const id: number = Number(req.params.id);
     try{
         const result = await store.getById(id);
         res.json(result);
@@ -37,8 +37,8 @@ const getById = async (req: Request, res: Response) => {
 }
 
 const authenticate = async (req: Request, res: Response) => {
-    let userName: string = req.body.userName;
-    let password: string = req.body.password;
+    const userName: string = req.body.userName;
+    const password: string = req.body.password;
     try{
         const result = await store.authenticate(userName, password);
         const token = jwt.sign({ user: result }, process.env.TOKEN_SECRET as string);
