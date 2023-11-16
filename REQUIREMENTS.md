@@ -5,32 +5,36 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 ## API Endpoints
 #### Products
-- Index 
-- Show
-- Create [token required]
-- [OPTIONAL] Top 5 most popular products 
-- [OPTIONAL] Products by category (args: product category)
+- Index: 'product/' [GET] 
+- Show: 'product/:id' [GET] 
+- Create: 'product/' [POST] 
+- Make order [token required]
 
 #### Users
-- Index [token required]
-- Show [token required]
-- Create N[token required]
+- Show [token required]: 'user/:id' [GET]
+- Create: 'user/' [POST]
+- Authenticate: 'user/authenticate' [POST]
 
 #### Orders
-- Current Order by user (args: user id)[token required]
-- [OPTIONAL] Completed Orders by user (args: user id)[token required]
+- Index: 'order/' [GET]
+- Get orders completed by user [token required]: '/orders/users/:user_id/completed' [GET]
+- Get orders active by user [token required]: '/orders/users/:user_id/active' [GET]
+- Create order: '/order/' [POST]
+- Update order: '/order/:id' [PUT]
+- Add product to order: '/order/:id/products' [POST]
 
 ## Data Shapes
 #### Product
 -  id
 - name
 - price
-- [OPTIONAL] category
+- category
 
 #### User
 - id
 - firstName
 - lastName
+- userName
 - password
 
 #### Orders
@@ -40,3 +44,49 @@ These are the notes from a meeting with the frontend developer that describe wha
 - user_id
 - status of order (active or complete)
 
+## Database
+#### Product
+```
+CREATE TABLE PRODUCT (
+    id SERIAL NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+```
+
+#### User
+```
+CREATE TABLE "USER" (
+    id SERIAL NOT NULL,
+    firstName VARCHAR(50) NOT NULL,
+    lastName VARCHAR(50) NOT NULL,
+    userName VARCHAR(50) NOT NULL,
+    password VARCHAR NOT NULL,
+    PRIMARY KEY (id)
+);
+```
+
+#### Orders
+```
+CREATE TABLE "ORDER" (
+    id SERIAL NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    user_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES "USER"(id)
+);
+```
+
+#### Order Product
+```
+CREATE TABLE ORDER_PRODUCT (
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    PRIMARY KEY (order_id, product_id),
+    FOREIGN KEY (order_id) REFERENCES "ORDER"(id),
+    FOREIGN KEY (product_id) REFERENCES PRODUCT(id)
+);
+```
