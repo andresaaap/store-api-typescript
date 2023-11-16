@@ -28,9 +28,33 @@ describe('Test endpoints responses', () => {
             price: 100.00,
             category: 'Basketball Shoes'
         });
+
+        const response4 = await request.post('/orders').send({
+            status: 'active',
+            user_id: 1
+        });
     });
 
     afterEach(async () => {
+
+        // Delete all of the order_products 
+        const conn5 = await client.connect();
+        const sql5 = 'DELETE FROM order_product;';
+        await conn5.query(sql5);
+        conn5.release();
+        
+        // Delete all of the orders
+        const conn6 = await client.connect();
+        const sql6 = 'DELETE FROM "ORDER";';
+        await conn6.query(sql6);
+        conn6.release();
+
+        // Reset the sequence
+        const conn7 = await client.connect();
+        const sql7 = 'ALTER SEQUENCE "ORDER_id_seq" RESTART WITH 1;';
+        await conn7.query(sql7);
+        conn7.release();
+
         // Delete all of the users
         const conn = await client.connect();
         const sql = 'DELETE FROM "USER";';
@@ -98,6 +122,52 @@ describe('Test endpoints responses', () => {
         const response = await request.get('/products/1');
         expect(response.status).toBe(200);
     });
+
+    it('create order - good order input - order created in db', async () => {
+        const response = await request.post('/orders').send({
+            status: 'active',
+            user_id: 1
+        });
+        expect(response.status).toBe(200);
+    });
+
+    it('get /orders get all orders - database with correct information - orders returned', async () => {
+        const response = await request.get('/orders');
+        expect(response.status).toBe(200);
+    });
+
+    it('get /orders/:id get order by id - good order input - order returned', async () => {
+        const response = await request.get('/orders/1');
+        expect(response.status).toBe(200);
+    });
+
+    it('get /orders/users/:user_id/completed get completed orders by user id - good user input - orders returned', async () => {
+        const response = await request.get('/orders/users/1/completed');
+        expect(response.status).toBe(200);
+    });
+
+    it('get /orders/users/:user_id/active get active orders by user id - good user input - orders returned', async () => {
+        const response = await request.get('/orders/users/1/active');
+        expect(response.status).toBe(200);
+    });
+
+    it('put /orders/:id update order - good order input - order updated in db', async () => {
+        const response = await request.put('/orders/1').send({
+            status: 'completed',
+            user_id: 1
+        });
+        expect(response.status).toBe(200);
+    });
+
+    it('post /orders/:id/products add product to order - good order input - product added to order', async () => {
+        const response = await request.post('/orders/1/products').send({
+            product_id: 1,
+            quantity: 2
+        });
+        expect(response.status).toBe(200);
+    });
+
+
 });
 
 
