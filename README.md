@@ -60,6 +60,20 @@ Build the project
   npm run build
 ```
 
+Create a .env file in the root directory and add the following variables
+
+```bash
+POSTGRES_HOST=127.0.0.1
+POSTGRES_DB=postgres
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=mypass
+POSTGRES_DB_TEST=postgres_test
+ENV=dev
+BCRYPT_PASSWORD=felipe-andres
+SALT_ROUNDS=10
+TOKEN_SECRET=secret
+```
+
 Run project
 
 ```bash
@@ -90,6 +104,20 @@ Make sure that the postgres-test database doesn't exist. If it does, drop it.
 
 ```bash
   db-migrate db:drop postgres_test
+```
+
+Create a .env file in the root directory and add the following variables
+
+```bash
+POSTGRES_HOST=127.0.0.1
+POSTGRES_DB=postgres
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=mypass
+POSTGRES_DB_TEST=postgres_test
+ENV=dev
+BCRYPT_PASSWORD=felipe-andres
+SALT_ROUNDS=10
+TOKEN_SECRET=secret
 ```
 
 To run tests, run the following command
