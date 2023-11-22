@@ -5,23 +5,47 @@ import { OrderStore } from "../models/order";
 const store = new OrderStore();
 
 const getAll = async (req: Request, res: Response) => {
+    try {
     const orders = await store.getAll();
     res.json(orders);
+    }
+    catch(err){
+        res.status(400);
+        res.json(err);
+    }
 }
 
 const getById = async (req: Request, res: Response) => {
+    try{
     const order = await store.getById(parseInt(req.params.id));
     res.json(order);
+    }
+    catch(err){
+        res.status(400);
+        res.json(err);
+    }
 }
 
 const getCompletedByUserId = async (req: Request, res: Response) => {
+    try{
     const order = await store.getCompletedByUserId(parseInt(req.params.user_id));
     res.json(order);
+    }
+    catch(err){
+        res.status(400);
+        res.json(err);
+    }
 }
 
 const getActiveByUserId = async (req: Request, res: Response) => {
+    try{
     const order = await store.getActiveByUserId(parseInt(req.params.user_id));
     res.json(order);
+    }
+    catch(err){
+        res.status(400);
+        res.json(err);
+    }
 }
 
 const create = async (req: Request, res: Response) => {

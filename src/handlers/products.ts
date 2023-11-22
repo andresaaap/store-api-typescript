@@ -4,13 +4,25 @@ import { Request, Response, Application } from "express";
 const productStore = new ProductStore();
 
 const getAll = async (_req: Request, res: Response) => {
+    try{
     const products: Product[] = await productStore.getAll();
     res.json(products);
+    }
+    catch(err){
+        res.status(400);
+        res.json(err);
+    }
 };
 
 const getById = async (req: Request, res: Response) => {
+    try{
     const product: Product = await productStore.getById(Number(req.params.id));
     res.json(product);
+    }
+    catch(err){
+        res.status(400);
+        res.json(err);
+    }
 }
 
 const create = async (req: Request, res: Response) => {
