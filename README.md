@@ -69,12 +69,14 @@ POSTGRES_USER=postgres
 POSTGRES_PASSWORD=mypass
 POSTGRES_DB_TEST=postgres_test
 ENV=dev
+POSTGRES_DB_PORT=5432
 BCRYPT_PASSWORD=felipe-andres
 SALT_ROUNDS=10
 TOKEN_SECRET=secret
+PORT=3000
 ```
 
-Run project
+Run project, which will start the server in port 3000 and the database in port 5432
 
 ```bash
   npm run start
@@ -115,9 +117,11 @@ POSTGRES_USER=postgres
 POSTGRES_PASSWORD=mypass
 POSTGRES_DB_TEST=postgres_test
 ENV=dev
+POSTGRES_DB_PORT=5432
 BCRYPT_PASSWORD=felipe-andres
 SALT_ROUNDS=10
 TOKEN_SECRET=secret
+PORT=3000
 ```
 
 To run tests, run the following command
